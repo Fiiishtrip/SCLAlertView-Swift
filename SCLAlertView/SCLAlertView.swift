@@ -780,6 +780,185 @@ open class SCLAlertView: UIViewController {
         return SCLAlertViewResponder(alertview: self)
     }
     
+    
+    // MARK: - xyz show
+    open func showXXXTitle(_ title: String,
+                           subTitle: NSMutableAttributedString,
+                           duration: TimeInterval?,
+                           completeText: String?,
+                           style: SCLAlertViewStyle,
+                           colorStyle: UInt?=0x000000,
+                           colorTextButton: UInt?=0xFFFFFF,
+                           circleIconImage: UIImage? = nil,
+                           animationStyle: SCLAnimationStyle = .topToBottom) -> SCLAlertViewResponder {
+//        let completeText: String?
+//        let duration: TimeInterval?
+//        open func showTitle(_ title: String, 
+//        subTitle: String,
+//        duration: TimeInterval?,
+//        completeText: String?,
+//        style: SCLAlertViewStyle,
+//        colorStyle: UInt?=0x000000,
+//        colorTextButton: UInt?=0xFFFFFF,
+//        circleIconImage: UIImage? = nil,
+//        animationStyle: SCLAnimationStyle = .topToBottom) -> SCLAlertViewResponder {
+
+        selfReference = self
+        view.alpha = 0
+        let rv = UIApplication.shared.keyWindow! as UIWindow
+        rv.addSubview(view)
+        view.frame = rv.bounds
+        baseView.frame = rv.bounds
+        
+        // Alert colour/icon
+        viewColor = UIColor()
+        var iconImage: UIImage?
+        let colorInt = colorStyle ?? style.defaultColorInt
+        viewColor = UIColorFromRGB(colorInt)
+        // Icon style
+        switch style {
+        case .success:
+            
+            iconImage = checkCircleIconImage(circleIconImage, defaultImage: SCLAlertViewStyleKit.imageOfCheckmark)
+            
+        case .error:
+            
+            iconImage = checkCircleIconImage(circleIconImage, defaultImage: SCLAlertViewStyleKit.imageOfCross)
+            
+        case .notice:
+            
+            iconImage = checkCircleIconImage(circleIconImage, defaultImage:SCLAlertViewStyleKit.imageOfNotice)
+            
+        case .warning:
+            
+            iconImage = checkCircleIconImage(circleIconImage, defaultImage:SCLAlertViewStyleKit.imageOfWarning)
+            
+        case .info:
+            
+            iconImage = checkCircleIconImage(circleIconImage, defaultImage:SCLAlertViewStyleKit.imageOfInfo)
+            
+        case .edit:
+            
+            iconImage = checkCircleIconImage(circleIconImage, defaultImage:SCLAlertViewStyleKit.imageOfEdit)
+            
+        case .wait:
+            
+            iconImage = nil
+            
+        default :
+            
+            iconImage = nil
+            
+        }
+        
+        // Title
+        if !title.isEmpty {
+            self.labelTitle.text = title
+        }
+        
+        // Subtitle
+//        if !subTitle.isEmpty {
+//            viewText.text = subTitle
+//            // Adjust text view size, if necessary
+//            let str = subTitle as NSString
+//            let attr = [NSFontAttributeName:viewText.font ?? UIFont()]
+//            let sz = CGSize(width: appearance.kWindowWidth - 24, height:90)
+//            let r = str.boundingRect(with: sz, options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes:attr, context:nil)
+//            let ht = ceil(r.size.height)
+//            if ht < appearance.kTextHeight {
+//                appearance.kWindowHeight -= (appearance.kTextHeight - ht)
+//                appearance.setkTextHeight(ht)
+//            }
+//        }
+        if !subTitle.string.isEmpty {
+            viewText.attributedText = subTitle
+            // Adjust text view size, if necessary
+            let str = subTitle.string as NSString
+            let attr = [NSFontAttributeName:viewText.font ?? UIFont()]
+            let sz = CGSize(width: appearance.kWindowWidth - 24, height:90)
+            let r = str.boundingRect(with: sz, options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes:attr, context:nil)
+            let ht = ceil(r.size.height)
+            if ht < appearance.kTextHeight {
+                appearance.kWindowHeight -= (appearance.kTextHeight - ht)
+                appearance.setkTextHeight(ht)
+            }
+        }
+        // Done button
+        if appearance.showCloseButton {
+            _ = addButton(completeText ?? "Done", target:self, selector:#selector(SCLAlertView.hideView))
+        }
+        
+        //hidden/show circular view based on the ui option
+        circleView.isHidden = !appearance.showCircularIcon
+        circleBG.isHidden = !appearance.showCircularIcon
+        
+        // Alert view colour and images
+        circleView.backgroundColor = viewColor
+        // Spinner / icon
+        if style == .wait {
+            let indicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            indicator.startAnimating()
+            circleIconView = indicator
+        }
+        else {
+            if let iconTintColor = iconTintColor {
+                circleIconView = UIImageView(image: iconImage!.withRenderingMode(.alwaysTemplate))
+                circleIconView?.tintColor = iconTintColor
+            }
+            else {
+                circleIconView = UIImageView(image: iconImage!)
+            }
+        }
+        circleView.addSubview(circleIconView!)
+        let x = (appearance.kCircleHeight - appearance.kCircleIconHeight) / 2
+        circleIconView!.frame = CGRect( x: x, y: x, width: appearance.kCircleIconHeight, height: appearance.kCircleIconHeight)
+        circleIconView?.layer.cornerRadius = circleIconView!.bounds.height / 2
+        circleIconView?.layer.masksToBounds = true
+        
+        for txt in inputs {
+            txt.layer.borderColor = viewColor.cgColor
+        }
+        
+        for txt in input {
+            txt.layer.borderColor = viewColor.cgColor
+        }
+        
+        for btn in buttons {
+            if let customBackgroundColor = btn.customBackgroundColor {
+                // Custom BackgroundColor set
+                btn.backgroundColor = customBackgroundColor
+            } else {
+                // Use default BackgroundColor derived from AlertStyle
+                btn.backgroundColor = viewColor
+            }
+            
+            if let customTextColor = btn.customTextColor {
+                // Custom TextColor set
+                btn.setTitleColor(customTextColor, for:UIControlState())
+            } else {
+                // Use default BackgroundColor derived from AlertStyle
+                btn.setTitleColor(UIColorFromRGB(colorTextButton ?? 0xFFFFFF), for:UIControlState())
+            }
+        }
+        
+        // Adding duration
+        if duration > 0 {
+            self.duration = duration
+            durationTimer?.invalidate()
+            durationTimer = Timer.scheduledTimer(timeInterval: self.duration, target: self, selector: #selector(SCLAlertView.hideView), userInfo: nil, repeats: false)
+            durationStatusTimer?.invalidate()
+            durationStatusTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(SCLAlertView.updateDurationStatus), userInfo: nil, repeats: true)
+        }
+        
+        // Animate in the alert view
+        self.showAnimation(animationStyle)
+        
+        // Chainable objects
+        return SCLAlertViewResponder(alertview: self)
+    }
+
+    
+    
     // Show animation in the alert view
     fileprivate func showAnimation(_ animationStyle: SCLAnimationStyle = .topToBottom, animationStartOffset: CGFloat = -400.0, boundingAnimationOffset: CGFloat = 15.0, animationDuration: TimeInterval = 0.2) {
         
