@@ -219,11 +219,12 @@
 				TargetAttributes = {
 					CEABB2401942AD9700FCB13C = {
 						CreatedOnToolsVersion = 6.0;
-						DevelopmentTeam = H9USWT9VUG;
+						DevelopmentTeam = HLBKRB67RG;
 						LastSwiftMigration = 0800;
 					};
 					CEABB2541942AD9700FCB13C = {
 						CreatedOnToolsVersion = 6.0;
+						DevelopmentTeam = HLBKRB67RG;
 						TestTargetID = CEABB2401942AD9700FCB13C;
 					};
 				};
@@ -419,7 +420,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				DEVELOPMENT_TEAM = H9USWT9VUG;
+				DEVELOPMENT_TEAM = HLBKRB67RG;
 				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = SCLAlertViewExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -437,7 +438,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				DEVELOPMENT_TEAM = H9USWT9VUG;
+				DEVELOPMENT_TEAM = HLBKRB67RG;
 				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = SCLAlertViewExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -453,6 +454,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SCLAlertViewExample.app/SCLAlertViewExample";
+				DEVELOPMENT_TEAM = HLBKRB67RG;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -474,6 +476,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SCLAlertViewExample.app/SCLAlertViewExample";
+				DEVELOPMENT_TEAM = HLBKRB67RG;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
